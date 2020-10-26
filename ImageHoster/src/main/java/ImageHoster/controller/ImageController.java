@@ -1,5 +1,6 @@
 package ImageHoster.controller;
 
+import ImageHoster.model.Comments;
 import ImageHoster.model.Image;
 import ImageHoster.model.Tag;
 import ImageHoster.model.User;
@@ -153,9 +154,8 @@ public class ImageController {
         updatedImage.setDate(new Date());
 
         imageService.updateImage(updatedImage);
-        return "redirect:/images/" + updatedImage.getTitle();
+        return "redirect:/images/" + imageId +"/"+ updatedImage.getTitle();
     }
-
 
     //This controller method is called when the request pattern is of type 'deleteImage' and also the incoming request is of DELETE type
     //The method calls the deleteImage() method in the business logic passing the id of the image to be deleted
