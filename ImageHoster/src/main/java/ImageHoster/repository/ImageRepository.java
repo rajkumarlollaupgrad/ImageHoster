@@ -50,10 +50,14 @@ public class ImageRepository {
     //Executes JPQL query to fetch the image from the database with corresponding title
     //Returns the image in case the image is found in the database
     //Returns null if no image is found in the database
-    public Image getImageByTitle(String title) {
+// Changing the method getImageByTitle to handle duplicates having same title by introducing Unique Identification field ID..
+// Instead of retrieving an image by its title, we should retrieve an image by a more unique
+//identifier, such as the image's table id. Implement this change in the whole code implementation
+//wherever we are retrieving the image by its title
+    public Image getImageByTitle(int id, String title) {
         EntityManager em = emf.createEntityManager();
         try {
-            TypedQuery<Image> typedQuery = em.createQuery("SELECT i from Image i where i.title =:title", Image.class).setParameter("title", title);
+            TypedQuery<Image> typedQuery = em.createQuery("SELECT i from Image i where i.title =:title and i.id = :id", Image.class).setParameter("title", title).setParameter("id",id);;
             return typedQuery.getSingleResult();
         } catch (NoResultException nre) {
             return null;
