@@ -3,6 +3,7 @@ package ImageHoster.controller;
 import ImageHoster.model.Image;
 import ImageHoster.model.Tag;
 import ImageHoster.model.User;
+import ImageHoster.service.CommentService;
 import ImageHoster.service.ImageService;
 import ImageHoster.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class ImageController {
     @Autowired
     private TagService tagService;
 
+    @Autowired
+    private CommentService commentService;
+
     //This method displays all the images in the user home page after successful login
     @RequestMapping("images")
     public String getUserImages(Model model) {
@@ -50,13 +54,13 @@ public class ImageController {
 
         //Changing method to getImageObject by passing imageId,title
         Image image = imageService.getImageByTitle(imageId, title);
-
+        List<Comments> comments = commentService.retrieveComments(image);
+        // String tags = convertTagsToString(image.getTags());
         model.addAttribute("image", image);
         model.addAttribute("tags", image.getTags());
-
+        model.addAttribute("comments", comments);
         return "images/image";
     }
-
     //This controller method is called when the request pattern is of type 'images/upload'
     //The method returns 'images/upload.html' file
     @RequestMapping("/images/upload")
@@ -107,6 +111,7 @@ public class ImageController {
         model.addAttribute("image", image);
         if (imageUserID != user.getId()){
             model.addAttribute("tags", image.getTags());
+            model.addAttribute("comments",image.getComments());
             String error = "Only the owner of the image can edit the image";
             model.addAttribute("editError", error);
             return "images/image";
@@ -117,7 +122,6 @@ public class ImageController {
             return "images/edit";
         }
     }
-
     //This controller method is called when the request pattern is of type 'images/edit' and also the incoming request is of PUT type
     //The method receives the imageFile, imageId, updated image, along with the Http Session
     //The method adds the new imageFile to the updated image if user updates the imageFile and adds the previous imageFile to the new updated image if user does not choose to update the imageFile
@@ -176,10 +180,12 @@ public class ImageController {
             model.addAttribute("tags", image.getTags());
             model.addAttribute("image", image);
             model.addAttribute("deleteError", error);
+            model.addAttribute("comments", image.getComments());
             return "images/image";
         }
 
     }
+
 
 
     //This method converts the image to Base64 format
